@@ -30,7 +30,7 @@ public class JwtService {
 
     public String createToken(UUID userId, String email){
         return JWT.create()
-                .withIssuer("soSocial")
+                .withIssuer("batalha-naval")
                 .withSubject(userId.toString())
                 .withClaim("email", email)
                 .withClaim("role", Role.PLAYER.name())
