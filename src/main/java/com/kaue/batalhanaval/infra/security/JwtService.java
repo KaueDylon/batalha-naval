@@ -41,7 +41,7 @@ public class JwtService {
 
     public DecodedJWT validateToken(String token){
         var decoded = JWT.require(Algorithm.HMAC256(secret))
-                .withIssuer("soSocial")
+                .withIssuer("batalha-naval")
                 .build()
                 .verify(token);
 
