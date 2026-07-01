@@ -2,7 +2,6 @@ package com.kaue.batalhanaval.domain.player.entity;
 
 import com.kaue.batalhanaval.commons.enums.Role;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,8 +22,7 @@ public class Player {
     @Column(nullable = false)
     private String name;
 
-    @Email
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
