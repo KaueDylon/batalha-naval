@@ -1,5 +1,6 @@
 package com.kaue.batalhanaval.domain.game;
 
+import com.kaue.batalhanaval.domain.game.dto.AttackResult;
 import com.kaue.batalhanaval.domain.game.entity.Board;
 import com.kaue.batalhanaval.domain.game.entity.Ship;
 import lombok.Getter;
@@ -27,21 +28,21 @@ public class Game {
         return board.placeShip(row, col, ship);
     }
 
-    public String processAttack(String attackerId, int row, int col){
+    public AttackResult processAttack(String attackerId, int row, int col){
 
-        if (!currentTurn.equals(attackerId)) return "NOT_YOUR_TURN";
+        if (!currentTurn.equals(attackerId)) return new AttackResult("NOT_YOUR_TURN", currentTurn);
 
         Board targetBoard = attackerId.equals(playerAId) ? playerBBoard : playerABoard;
         String result = targetBoard.receiveAttack(row, col);
 
-        if(result.equals("SUNK") && targetBoard.allShipsSunk()){
+        if (result.equals("SUNK") && targetBoard.allShipsSunk()){
             winner = attackerId;
-            return "GAME_OVER";
+            return new AttackResult("GAME_OVER", null);
         }
 
         if (result.equals("MISS")) switchTurn();
 
-        return result;
+        return new AttackResult(result, currentTurn);
     }
 
     public int[][] getBoardView(String requestId, String targetId){

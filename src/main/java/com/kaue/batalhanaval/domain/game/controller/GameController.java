@@ -1,13 +1,12 @@
 package com.kaue.batalhanaval.domain.game.controller;
 
 import com.kaue.batalhanaval.domain.game.dto.AttackRequest;
+import com.kaue.batalhanaval.domain.game.dto.AttackResult;
 import com.kaue.batalhanaval.domain.game.dto.PlaceShipRequest;
 import com.kaue.batalhanaval.domain.game.service.GameService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -35,10 +34,10 @@ public class GameController {
     }
 
     @PostMapping("/{id}/attack")
-    public ResponseEntity<String> attack(@PathVariable String id,
-                                         @RequestBody AttackRequest req,
-                                         @AuthenticationPrincipal UUID user){
-        String result = gameService.attack(id, user.toString(), req.row(), req.col());
+    public ResponseEntity<AttackResult> attack(@PathVariable String id,
+                                               @RequestBody AttackRequest req,
+                                               @AuthenticationPrincipal UUID user){
+        AttackResult result = gameService.attack(id, user.toString(), req.row(), req.col());
         return ResponseEntity.ok(result);
     }
 

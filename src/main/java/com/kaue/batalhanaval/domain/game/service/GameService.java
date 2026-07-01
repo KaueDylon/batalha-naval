@@ -1,5 +1,6 @@
 package com.kaue.batalhanaval.domain.game.service;
 
+import com.kaue.batalhanaval.domain.game.dto.AttackResult;
 import com.kaue.batalhanaval.domain.game.dto.PlaceShipRequest;
 import com.kaue.batalhanaval.domain.game.entity.Ship;
 import com.kaue.batalhanaval.domain.game.Game;
@@ -26,7 +27,7 @@ public class GameService {
         return game.placeShip(playerId, req.row(), req.col(), ship);
     }
 
-    public String attack(String gameId, String attackerId, int row, int col){
+    public AttackResult attack(String gameId, String attackerId, int row, int col){
         return getGame(gameId).processAttack(attackerId, row, col);
     }
 
