@@ -11,8 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
-
 @Service
 public class AuthService {
 
@@ -53,13 +51,6 @@ public class AuthService {
         }
 
         return new AuthTokenResponse(jwtService.createToken(player.getId(), player.getEmail()));
-    }
-
-    @Transactional
-    public void delete(UUID userId){
-        var user = playerRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
-        playerRepository.delete(user);
     }
 
 }
