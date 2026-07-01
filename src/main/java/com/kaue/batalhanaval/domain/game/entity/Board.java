@@ -10,6 +10,7 @@ public class Board {
     public static final int SHIP = 1;
     public static final int MISS = 2;
     public static final int HIT = 3;
+    public static final int MAX_SHIPS = 5;
     private int[][] grid;
     private Ship[][] shipGrid;
     private List<Ship> ships = new ArrayList<>();
@@ -20,6 +21,7 @@ public class Board {
     }
 
     public boolean placeShip(int row, int col, Ship ship){
+        if (ships.size() >= MAX_SHIPS) return false;
         if (!isValidPosition(row,col,ship)) return false;
         for (int i = 0; i < ship.getSize(); i++){
             if (ship.getOrientation()){
