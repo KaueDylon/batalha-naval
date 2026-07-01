@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/game")
 @RequiredArgsConstructor
@@ -19,32 +21,32 @@ public class GameController {
 
     @PostMapping("/create")
     public ResponseEntity<String> create(@RequestParam String playerBid,
-                                         @AuthenticationPrincipal UserDetails user){
-        String gameId = gameService.createGame(user.getUsername(), playerBid);
+                                         @AuthenticationPrincipal UUID user){
+        String gameId = gameService.createGame(user.toString(), playerBid);
         return ResponseEntity.ok(gameId);
     }
 
     @PostMapping("/{id}/place")
     public ResponseEntity<Boolean> place(@PathVariable String id,
                                          @RequestBody PlaceShipRequest req,
-                                         @AuthenticationPrincipal UserDetails user){
-        boolean ok = gameService.placeShip(id, user.getUsername(), req);
+                                         @AuthenticationPrincipal UUID user){
+        boolean ok = gameService.placeShip(id, user.toString(), req);
         return ResponseEntity.ok(ok);
     }
 
     @PostMapping("/{id}/attack")
     public ResponseEntity<String> attack(@PathVariable String id,
                                          @RequestBody AttackRequest req,
-                                         @AuthenticationPrincipal UserDetails user){
-        String result = gameService.attack(id, user.getUsername(), req.row(), req.col());
+                                         @AuthenticationPrincipal UUID user){
+        String result = gameService.attack(id, user.toString(), req.row(), req.col());
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}/board/{targetId}")
     public ResponseEntity<int[][]> board(@PathVariable String id,
                                          @PathVariable String targetId,
-                                         @AuthenticationPrincipal UserDetails user){
-        int[][] board = gameService.getBoard(id, user.getUsername(), targetId);
+                                         @AuthenticationPrincipal UUID user){
+        int[][] board = gameService.getBoard(id, user.toString(), targetId);
         return ResponseEntity.ok(board);
     }
 
