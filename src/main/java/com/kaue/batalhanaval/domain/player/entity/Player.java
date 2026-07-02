@@ -1,5 +1,7 @@
 package com.kaue.batalhanaval.domain.player.entity;
 
+import com.kaue.batalhanaval.commons.enums.Nation;
+import com.kaue.batalhanaval.commons.enums.NationPortrait;
 import com.kaue.batalhanaval.commons.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -31,4 +33,22 @@ public class Player {
     @Enumerated(EnumType.STRING)
     @Column(name = "role_player", nullable = false)
     private Role rolePlayer;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "nation")
+    private Nation nation;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "portrait")
+    private NationPortrait portrait;
+
+    @Column(nullable = false)
+    private int wins = 0;
+
+    @Column(nullable = false)
+    private int losses = 0;
+
+    public boolean hasNation() {
+        return nation != null;
+    }
 }
