@@ -14,13 +14,6 @@ public class GameController {
 
     private final GameService gameService;
 
-    @PostMapping("/create")
-    public ResponseEntity<String> create(@RequestParam String playerBid,
-                                         @AuthenticationPrincipal UUID user){
-        String gameId = gameService.createGame(user.toString(), playerBid);
-        return ResponseEntity.ok(gameId);
-    }
-
     @GetMapping("/{id}/board/{targetId}")
     public ResponseEntity<int[][]> board(@PathVariable String id,
                                          @PathVariable String targetId,
