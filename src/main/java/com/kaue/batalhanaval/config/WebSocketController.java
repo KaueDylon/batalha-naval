@@ -1,7 +1,9 @@
 package com.kaue.batalhanaval.config;
 
+import com.kaue.batalhanaval.domain.game.Game;
 import com.kaue.batalhanaval.domain.game.dto.*;
 import com.kaue.batalhanaval.domain.game.service.GameService;
+import com.kaue.batalhanaval.domain.match.service.MatchHistoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
@@ -12,11 +14,13 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
+import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
 public class WebSocketController {
     private final GameService gameService;
+    private final MatchHistoryService matchHistoryService;
     private final SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/game/{gameId}/attack")
@@ -32,6 +36,12 @@ public class WebSocketController {
         messagingTemplate.convertAndSend("/topic/game/" + gameId, response);
 
         if ("GAME_OVER".equals(result.status())) {
+
+            Game game = gameService.getGame(gameId);
+            String loserId = attackerId.equals(game.getPlayerAId()) ? game.getPlayerBId() : game.getPlayerAId();
+
+            matchHistoryService.recordMatch(UUID.fromString(attackerId), UUID.fromString(loserId));
+
             GameEvent event = new GameEvent("GAME_OVER", "Partida Finalizada", response.nextTurn());
             messagingTemplate.convertAndSend("/topic/game/" + gameId, event);
         }
