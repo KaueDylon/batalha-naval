@@ -25,21 +25,21 @@ public class GameController {
         return ResponseEntity.ok(gameId);
     }
 
-    @PostMapping("/{id}/place")
-    public ResponseEntity<Boolean> place(@PathVariable String id,
-                                         @RequestBody PlaceShipRequest req,
-                                         @AuthenticationPrincipal UUID user){
-        boolean ok = gameService.placeShip(id, user.toString(), req);
-        return ResponseEntity.ok(ok);
-    }
-
-    @PostMapping("/{id}/attack")
-    public ResponseEntity<AttackResult> attack(@PathVariable String id,
-                                               @RequestBody AttackRequest req,
-                                               @AuthenticationPrincipal UUID user){
-        AttackResult result = gameService.attack(id, user.toString(), req.row(), req.col());
-        return ResponseEntity.ok(result);
-    }
+//    @PostMapping("/{id}/place")
+//    public ResponseEntity<Boolean> place(@PathVariable String id,
+//                                         @RequestBody PlaceShipRequest req,
+//                                         @AuthenticationPrincipal UUID user){
+//        boolean ok = gameService.placeShip(id, user.toString(), req);
+//        return ResponseEntity.ok(ok);
+//    }
+//
+//    @PostMapping("/{id}/attack")
+//    public ResponseEntity<AttackResult> attack(@PathVariable String id,
+//                                               @RequestBody AttackRequest req,
+//                                               @AuthenticationPrincipal UUID user){
+//        AttackResult result = gameService.attack(id, user.toString(), req.row(), req.col());
+//        return ResponseEntity.ok(result);
+//    }
 
     @GetMapping("/{id}/board/{targetId}")
     public ResponseEntity<int[][]> board(@PathVariable String id,

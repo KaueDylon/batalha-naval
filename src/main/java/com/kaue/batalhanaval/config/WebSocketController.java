@@ -2,6 +2,7 @@ package com.kaue.batalhanaval.config;
 
 import com.kaue.batalhanaval.domain.game.dto.AttackRequest;
 import com.kaue.batalhanaval.domain.game.dto.AttackResponse;
+import com.kaue.batalhanaval.domain.game.dto.AttackResult;
 import com.kaue.batalhanaval.domain.game.dto.PlaceShipRequest;
 import com.kaue.batalhanaval.domain.game.service.GameService;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,9 @@ public class WebSocketController {
                        Principal principal){
 
         String attackerId = principal.getName();
-        String result = gameService.attack(gameId, attackerId, req.row(), req.col());
+        AttackResult result = gameService.attack(gameId, attackerId, req.row(), req.col());
 
-        AttackResponse response = new AttackResponse(result, req.row(), req.col(), attackerId);
+        AttackResponse response = new AttackResponse(result.status(), req.row(), req.col(), attackerId, result.nextTurn());
 
         messagingTemplate.convertAndSend("/topic/game/" + gameId, response);
     }
