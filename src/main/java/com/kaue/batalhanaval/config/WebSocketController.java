@@ -49,6 +49,16 @@ public class WebSocketController {
         );
     }
 
+    @MessageMapping("/game/{gameId}/clear")
+    public void clear(@DestinationVariable String gameId, Principal principal){
+        String playerId = principal.getName();
+        gameService.clearBoard(gameId, playerId);
+
+        messagingTemplate.convertAndSendToUser(
+                playerId, "/queue/place-result", "BOARD_CLEARED"
+        );
+    }
+
     @MessageMapping("/game/{gameId}/ready")
     public void ready(@DestinationVariable String gameId, Principal principal){
         String playerId = principal.getName();

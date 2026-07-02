@@ -26,6 +26,11 @@ public class GameService {
         return game.placeShip(playerId, req.row(), req.col(), ship);
     }
 
+    public void clearBoard(String gameId, String playerId){
+        Game game = getGame(gameId);
+        game.clearPlayerBoard(playerId);
+    }
+
     public boolean playerReady(String gameId, String playerId){
         Game game = getGame(gameId);
         return game.setPlayerReady(playerId);

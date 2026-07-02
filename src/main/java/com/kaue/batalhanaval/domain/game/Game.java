@@ -87,6 +87,17 @@ public class Game {
         return new AttackResult(result, currentTurn);
     }
 
+    public synchronized void clearPlayerBoard(String playerId){
+        if (phase != Phase.SETUP) {
+            throw new IllegalArgumentException("Tabuleiro é limpo apenas na fase de setup");
+        }
+        if (isPlayerReady(playerId)){
+            throw new IllegalArgumentException("Você já confirmou prontidão.");
+        }
+        Board board = getOwnBoard(playerId);
+        board.clearBoard();
+    }
+
     public int[][] getBoardView(String requestId, String targetId){
         Board target = getOwnBoard(targetId);
 

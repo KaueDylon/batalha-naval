@@ -37,6 +37,12 @@ public class Board {
         return true;
     }
 
+    public void clearBoard(){
+        grid = new int[10][10];
+        shipGrid = new Ship[10][10];
+        ships = new ArrayList<>();
+    }
+
     public boolean allShipsSunk(){
         return ships.stream().allMatch(Ship::isSunk);
     }
