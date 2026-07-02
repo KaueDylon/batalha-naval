@@ -1,5 +1,6 @@
 package com.kaue.batalhanaval.domain.game;
 
+import com.kaue.batalhanaval.commons.enums.Phase;
 import com.kaue.batalhanaval.domain.game.dto.AttackResult;
 import com.kaue.batalhanaval.domain.game.entity.Board;
 import com.kaue.batalhanaval.domain.game.entity.Ship;
@@ -14,30 +15,71 @@ public class Game {
     private final Board playerBBoard = new Board();
     private String currentTurn;
     private String winner;
+    private Phase phase;
     private String playerAId;
     private String playerBId;
+    private boolean playerAReady;
+    private boolean playerBReady;
 
     public Game(String playerAId, String playerBId){
         this.playerAId = playerAId;
         this.playerBId = playerBId;
         this.currentTurn = playerAId;
+        this.phase = Phase.SETUP;
+        this.playerAReady = false;
+        this.playerBReady = false;
     }
 
-    public boolean placeShip(String playerId, int row, int col, Ship ship){
+    public synchronized boolean placeShip(String playerId, int row, int col, Ship ship){
+        if (phase != Phase.SETUP) return false;
+        if (isPlayerReady(playerId)) return false;
         Board board = getOwnBoard(playerId);
         return board.placeShip(row, col, ship);
     }
 
-    public AttackResult processAttack(String attackerId, int row, int col){
+    public synchronized boolean setPlayerReady(String playerId){
+        if (phase != Phase.SETUP) return false;
+
+        if (!isParticipant(playerId)){
+            throw new IllegalArgumentException("Jogador não participa dessa partida.");
+        }
+
+        Board board = getOwnBoard(playerId);
+        if (board.getShipCount() < 5 ){
+            throw new IllegalArgumentException("Posicione todos os navios antes de ficar pronto.");
+        }
+
+        if(playerId.equals(playerAId)){
+            playerAReady = true;
+        } else {
+            playerBReady = true;
+        }
+
+        if (playerAReady && playerBReady){
+            phase = Phase.PLAYING;
+            return true;
+        }
+        return false;
+    }
+
+
+    public synchronized AttackResult processAttack(String attackerId, int row, int col){
+
+        if (phase == Phase.SETUP) return new AttackResult("GAME_NOT_STARTED", null);
+
+        if (phase == Phase.FINISHED) return new AttackResult("GAME_ALREADY_FINISHED", winner);
 
         if (!currentTurn.equals(attackerId)) return new AttackResult("NOT_YOUR_TURN", currentTurn);
+
+        if (row < 0 || row >= 10 || col < 0 || col >= 10) return new AttackResult("INVALID_POSITION", currentTurn);
 
         Board targetBoard = attackerId.equals(playerAId) ? playerBBoard : playerABoard;
         String result = targetBoard.receiveAttack(row, col);
 
         if (result.equals("SUNK") && targetBoard.allShipsSunk()){
             winner = attackerId;
-            return new AttackResult("GAME_OVER", null);
+            phase = Phase.FINISHED;
+            return new AttackResult("GAME_OVER", attackerId);
         }
 
         if (result.equals("MISS")) switchTurn();
@@ -50,6 +92,16 @@ public class Game {
 
         if (!requestId.equals(targetId)) return target.getGridForPlayer();
         return target.getGrid();
+    }
+
+    public boolean isParticipant(String playerId){
+        return playerId.equals(playerAId) || playerId.equals(playerBId);
+    }
+
+    public boolean isPlayerReady(String playerId){
+        if (playerId.equals(playerAId)) return playerAReady;
+        if (playerId.equals(playerBId)) return playerBReady;
+        return false;
     }
 
     private void switchTurn(){

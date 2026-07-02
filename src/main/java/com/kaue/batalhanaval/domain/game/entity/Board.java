@@ -41,6 +41,8 @@ public class Board {
         return ships.stream().allMatch(Ship::isSunk);
     }
 
+    public int getShipCount(){ return ships.size(); }
+
     public boolean isValidPosition(int row, int col, Ship ship){
         for (int i = 0; i < ship.getSize(); i++){
             int r = ship.getOrientation() ? row : row + i;

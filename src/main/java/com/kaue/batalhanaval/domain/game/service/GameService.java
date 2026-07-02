@@ -5,15 +5,14 @@ import com.kaue.batalhanaval.domain.game.dto.PlaceShipRequest;
 import com.kaue.batalhanaval.domain.game.entity.Ship;
 import com.kaue.batalhanaval.domain.game.Game;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class GameService {
 
-    private final Map<String, Game> games = new HashMap<>();
+    private final Map<String, Game> games = new ConcurrentHashMap<>();
 
     public String createGame(String playerAId, String playerBId) {
         String gameId = UUID.randomUUID().toString();
@@ -27,6 +26,11 @@ public class GameService {
         return game.placeShip(playerId, req.row(), req.col(), ship);
     }
 
+    public boolean playerReady(String gameId, String playerId){
+        Game game = getGame(gameId);
+        return game.setPlayerReady(playerId);
+    }
+
     public AttackResult attack(String gameId, String attackerId, int row, int col){
         return getGame(gameId).processAttack(attackerId, row, col);
     }
@@ -35,7 +39,7 @@ public class GameService {
         return getGame(gameId).getBoardView(requesterId, targetId);
     }
 
-    private Game getGame(String gameId){
+    public Game getGame(String gameId){
         Game game = games.get(gameId);
         if (game == null) throw new RuntimeException("Partida não foi encontrada.");
         return game;
