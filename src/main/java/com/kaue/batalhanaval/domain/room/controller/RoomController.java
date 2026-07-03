@@ -47,6 +47,13 @@ public class RoomController {
         return ResponseEntity.ok(rooms);
     }
 
+    @GetMapping("/{roomId}")
+    public ResponseEntity<RoomResponse> getRoom(@PathVariable String roomId,
+                                                 @AuthenticationPrincipal UUID user) {
+        Room room = roomService.getRoom(roomId);
+        return ResponseEntity.ok(toResponse(room));
+    }
+
     private RoomResponse toResponse(Room room) {
         return new RoomResponse(
                 room.getId(), room.getCode(), room.getHostId(),
