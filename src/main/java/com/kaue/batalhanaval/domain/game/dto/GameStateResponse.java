@@ -5,7 +5,7 @@ public record GameStateResponse(
         String phase,
         String currentTurn,
         String playerAId,
-        String plauerBid,
+        String playerBid,
         boolean playerAReady,
         boolean playerBReady,
         String winner
