@@ -1,5 +1,6 @@
 package com.kaue.batalhanaval.domain.match.service;
 
+import com.kaue.batalhanaval.domain.match.dto.MatchHistoryResponse;
 import com.kaue.batalhanaval.domain.match.entity.MatchHistory;
 import com.kaue.batalhanaval.domain.match.repository.MatchHistoryRepository;
 import com.kaue.batalhanaval.domain.player.service.PlayerService;
@@ -26,5 +27,20 @@ public class MatchHistoryService {
 
     public List<MatchHistory> getPlayerHistory(UUID playerId) {
         return matchHistoryRepository.findByWinnerIdOrLoserIdOrderByPlayedAtDesc(playerId, playerId);
+    }
+
+    public List<MatchHistoryResponse> getPlayerHistoryResponse(UUID playerId){
+        return matchHistoryRepository
+                .findByWinnerIdOrLoserIdOrderByPlayedAtDesc(playerId, playerId)
+                .stream()
+                .map(match -> new MatchHistoryResponse(
+                        match.getId(),
+                        match.getWinnerId(),
+                        match.getLoserId(),
+                        match.getWinnerId().equals(playerId),
+                        match.getPlayedAt()
+
+                ))
+                .toList();
     }
 }
