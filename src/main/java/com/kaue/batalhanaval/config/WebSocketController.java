@@ -84,6 +84,20 @@ public class WebSocketController {
         }
     }
 
+    @MessageMapping("/game/{gameId}/surrender")
+    public void surrender(@DestinationVariable String gameId, Principal principal){
+        String playerId = principal.getName();
+        String winnerId = gameService.surrender(gameId, playerId);
+
+        matchHistoryService.recordMatch(UUID.fromString(winnerId), UUID.fromString(playerId));
+
+        GameEvent event = new GameEvent("PLAYER_SURRENDERED", "Jogador abandonou a partida.", playerId);
+        messagingTemplate.convertAndSend("/topic/game/" + gameId, event);
+
+        GameEvent gameOver = new GameEvent("GAME_OVER", "Partida finalizada por abandono.", winnerId);
+        messagingTemplate.convertAndSend("/topic/game/" + gameId, gameOver);
+    }
+
     @MessageExceptionHandler
     @SendToUser("/queue/errors")
     public String handleException(Exception exception){

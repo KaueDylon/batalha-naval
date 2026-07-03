@@ -72,6 +72,22 @@ public class GameService {
         return playerToGame.get(playerId);
     }
 
+    public String surrender(String gameId, String playerId) {
+        Game game = getGame(gameId);
+        String winnerId = game.surrender(playerId);
+        removePlayerFromGame(game.getPlayerAId());
+        removePlayerFromGame(game.getPlayerBId());
+        return winnerId;
+    }
+
+    public void removeGame(String gameId) {
+        Game game = games.remove(gameId);
+        if (game != null) {
+            playerToGame.remove(game.getPlayerAId());
+            playerToGame.remove(game.getPlayerBId());
+        }
+    }
+
     public String getOpponentId(String gameId, String playerId) {
         Game game = games.get(gameId);
         if (game == null) return null;

@@ -98,6 +98,20 @@ public class Game {
         board.clearBoard();
     }
 
+    public synchronized String surrender(String playerId){
+        if (phase == Phase.FINISHED) {
+            throw new IllegalStateException("A partida já foi finalizada.");
+        }
+        if (!isParticipant(playerId)){
+            throw new IllegalArgumentException("Jogador não participa dessa partida.");
+        }
+
+        String opponentId = playerId.equals(playerAId) ? playerBId : playerAId;
+        this.winner = opponentId;
+        this.phase = Phase.FINISHED;
+        return opponentId;
+    }
+
     public int[][] getBoardView(String requestId, String targetId){
         Board target = getOwnBoard(targetId);
 
