@@ -54,11 +54,18 @@ public class RoomController {
         return ResponseEntity.ok(toResponse(room));
     }
 
+    @DeleteMapping("/{roomId}")
+    public ResponseEntity<Void> deleteRoom(@PathVariable String roomId,
+                                            @AuthenticationPrincipal UUID user) {
+        roomService.deleteRoom(roomId, user.toString());
+        return ResponseEntity.noContent().build();
+    }
+
     private RoomResponse toResponse(Room room) {
         return new RoomResponse(
                 room.getId(), room.getCode(), room.getHostId(),
-                room.getHostName(), room.getGuestId(), room.getGameId(),
-                room.getStatus().name()
+                room.getHostName(), room.getGuestId(), room.getGuestName(),
+                room.getGameId(), room.getStatus().name()
         );
     }
 }

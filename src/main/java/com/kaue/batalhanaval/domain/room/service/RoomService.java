@@ -2,6 +2,8 @@ package com.kaue.batalhanaval.domain.room.service;
 
 import com.kaue.batalhanaval.commons.enums.RoomStatus;
 import com.kaue.batalhanaval.domain.game.service.GameService;
+import com.kaue.batalhanaval.domain.player.entity.Player;
+import com.kaue.batalhanaval.domain.player.repository.PlayerRepository;
 import com.kaue.batalhanaval.domain.room.dto.RoomResponse;
 import com.kaue.batalhanaval.domain.room.entity.Room;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +20,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RoomService {
 
     private final GameService gameService;
+    private final PlayerRepository playerRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final Map<String, Room> rooms = new ConcurrentHashMap<>();
 
     public Room createRoom(String hostId, String hostName) {
+        boolean alreadyHasRoom = rooms.values().stream()
+                .anyMatch(r -> r.getHostId().equals(hostId) && r.getStatus() == RoomStatus.WAITING);
+        if (alreadyHasRoom) {
+            throw new IllegalStateException("Você já tem uma sala aberta.");
+        }
+
         String roomId = UUID.randomUUID().toString();
         String code = generateCode();
         Room room = new Room(roomId, code, hostId, hostName);
@@ -31,7 +40,11 @@ public class RoomService {
 
     public Room joinRoom(String roomId, String guestId) {
         Room room = getRoom(roomId);
-        if (!room.join(guestId)) {
+
+        Player guest = playerRepository.findById(UUID.fromString(guestId))
+                .orElseThrow(() -> new IllegalArgumentException("Jogador não encontrado."));
+
+        if (!room.join(guestId, guest.getName())) {
             throw new IllegalStateException("Não foi possível entrar na sala.");
         }
 
@@ -55,6 +68,17 @@ public class RoomService {
         return joinRoom(room.getId(), guestId);
     }
 
+    public void deleteRoom(String roomId, String requesterId) {
+        Room room = getRoom(roomId);
+        if (!room.getHostId().equals(requesterId)) {
+            throw new IllegalArgumentException("Apenas o host pode fechar a sala.");
+        }
+        if (room.getStatus() == RoomStatus.IN_GAME) {
+            throw new IllegalStateException("Não é possível fechar uma sala com jogo em andamento.");
+        }
+        rooms.remove(roomId);
+    }
+
     public List<Room> listOpenRooms() {
         return rooms.values().stream()
                 .filter(r -> r.getStatus() == RoomStatus.WAITING)
@@ -70,8 +94,8 @@ public class RoomService {
     private RoomResponse toResponse(Room room) {
         return new RoomResponse(
                 room.getId(), room.getCode(), room.getHostId(),
-                room.getHostName(), room.getGuestId(), room.getGameId(),
-                room.getStatus().name()
+                room.getHostName(), room.getGuestId(), room.getGuestName(),
+                room.getGameId(), room.getStatus().name()
         );
     }
 

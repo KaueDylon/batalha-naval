@@ -6,6 +6,7 @@ public record RoomResponse(
         String hostId,
         String hostName,
         String guestId,
+        String guestName,
         String gameId,
         String status
 ) {}

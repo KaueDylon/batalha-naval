@@ -12,6 +12,7 @@ public class Room {
     private String hostId;
     private String hostName;
     private String guestId;
+    private String guestName;
     private String gameId;
     private RoomStatus status;
 
@@ -23,10 +24,11 @@ public class Room {
         this.status = RoomStatus.WAITING;
     }
 
-    public boolean join(String guestId){
+    public boolean join(String guestId, String guestName){
         if (this.status != RoomStatus.WAITING) return false;
         if (guestId.equals(hostId)) return false;
         this.guestId = guestId;
+        this.guestName = guestName;
         this.status = RoomStatus.FULL;
         return true;
     }
