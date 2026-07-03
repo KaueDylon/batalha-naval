@@ -1,6 +1,7 @@
 package com.kaue.batalhanaval.domain.game.service;
 
 import com.kaue.batalhanaval.domain.game.dto.AttackResult;
+import com.kaue.batalhanaval.domain.game.dto.GameStateResponse;
 import com.kaue.batalhanaval.domain.game.dto.PlaceShipRequest;
 import com.kaue.batalhanaval.domain.game.entity.Ship;
 import com.kaue.batalhanaval.domain.game.Game;
@@ -44,9 +45,28 @@ public class GameService {
         return getGame(gameId).getBoardView(requesterId, targetId);
     }
 
+    public GameStateResponse getGameState(String gameId, String requesterId) {
+        Game game = getGame(gameId);
+
+        if (!game.isParticipant(requesterId)) {
+            throw new IllegalArgumentException("Você não participa dessa partida.");
+        }
+
+        return new GameStateResponse(
+                gameId,
+                game.getPhase().name(),
+                game.getCurrentTurn(),
+                game.getPlayerAId(),
+                game.getPlayerBId(),
+                game.isPlayerAReady(),
+                game.isPlayerBReady(),
+                game.getWinner()
+        );
+    }
+
     public Game getGame(String gameId){
         Game game = games.get(gameId);
-        if (game == null) throw new RuntimeException("Partida não foi encontrada.");
+        if (game == null) throw new IllegalArgumentException("Partida não foi encontrada.");
         return game;
     }
 }
