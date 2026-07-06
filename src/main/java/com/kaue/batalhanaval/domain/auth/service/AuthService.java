@@ -25,6 +25,11 @@ public class AuthService {
     }
 
     @Transactional
+    public void logout(String token) {
+        jwtService.revokeToken(token);
+    }
+
+    @Transactional
     public AuthTokenResponse register(AuthRegisterRequest req){
         if(playerRepository.existsByEmail(req.email())){
             throw new IllegalArgumentException("Esse e-mail já foi cadastrado.");
