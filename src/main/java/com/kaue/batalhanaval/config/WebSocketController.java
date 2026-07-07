@@ -31,7 +31,7 @@ public class WebSocketController {
         String attackerId = principal.getName();
         AttackResult result = gameService.attack(gameId, attackerId, req.row(), req.col());
 
-        AttackResponse response = new AttackResponse(result.status(), req.row(), req.col(), attackerId, result.nextTurn());
+        AttackResponse response = new AttackResponse(result.status(), req.row(), req.col(), attackerId, result.nextTurn(), result.shipType());
 
         messagingTemplate.convertAndSend("/topic/game/" + gameId, response);
 

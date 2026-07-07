@@ -1,7 +1,9 @@
 package com.kaue.batalhanaval.domain.game;
 
 import com.kaue.batalhanaval.commons.enums.Phase;
+import com.kaue.batalhanaval.domain.game.dto.AttackCellResult;
 import com.kaue.batalhanaval.domain.game.dto.AttackResult;
+import com.kaue.batalhanaval.domain.game.dto.BoardCellResponse;
 import com.kaue.batalhanaval.domain.game.entity.Board;
 import com.kaue.batalhanaval.domain.game.entity.Ship;
 import lombok.Getter;
@@ -65,26 +67,28 @@ public class Game {
 
     public synchronized AttackResult processAttack(String attackerId, int row, int col){
 
-        if (phase == Phase.SETUP) return new AttackResult("GAME_NOT_STARTED", null);
+        if (phase == Phase.SETUP) return new AttackResult("GAME_NOT_STARTED", null, null);
 
-        if (phase == Phase.FINISHED) return new AttackResult("GAME_ALREADY_FINISHED", winner);
+        if (phase == Phase.FINISHED) return new AttackResult("GAME_ALREADY_FINISHED", winner, null);
 
-        if (!currentTurn.equals(attackerId)) return new AttackResult("NOT_YOUR_TURN", currentTurn);
+        if (!currentTurn.equals(attackerId)) return new AttackResult("NOT_YOUR_TURN", currentTurn, null);
 
-        if (row < 0 || row >= 10 || col < 0 || col >= 10) return new AttackResult("INVALID_POSITION", currentTurn);
+        if (row < 0 || row >= 10 || col < 0 || col >= 10) return new AttackResult("INVALID_POSITION", currentTurn, null);
 
         Board targetBoard = attackerId.equals(playerAId) ? playerBBoard : playerABoard;
-        String result = targetBoard.receiveAttack(row, col);
+        AttackCellResult cellResult = targetBoard.receiveAttack(row, col);
+        String result = cellResult.status();
+        String shipTypeName = cellResult.shipType() != null ? cellResult.shipType().name() : null;
 
         if (result.equals("SUNK") && targetBoard.allShipsSunk()){
             winner = attackerId;
             phase = Phase.FINISHED;
-            return new AttackResult("GAME_OVER", attackerId);
+            return new AttackResult("GAME_OVER", attackerId, shipTypeName);
         }
 
         if (result.equals("MISS")) switchTurn();
 
-        return new AttackResult(result, currentTurn);
+        return new AttackResult(result, currentTurn, shipTypeName);
     }
 
     public synchronized void clearPlayerBoard(String playerId){
@@ -117,6 +121,28 @@ public class Game {
 
         if (!requestId.equals(targetId)) return target.getGridForPlayer();
         return target.getGrid();
+    }
+
+    public BoardCellResponse[][] getBoardViewDetailed(String requestId, String targetId){
+        Board target = getOwnBoard(targetId);
+        int[][] grid = requestId.equals(targetId) ? target.getGrid() : target.getGridForPlayer();
+        Ship[][] shipGrid = target.getShipGrid();
+
+        BoardCellResponse[][] result = new BoardCellResponse[10][10];
+        for (int r = 0; r < 10; r++){
+            for (int c = 0; c < 10; c++){
+                String shipType = null;
+                // Mostrar tipo do navio se: é o próprio tabuleiro (vê tudo)
+                // ou se a célula foi acertada (HIT=3) no tabuleiro do oponente
+                if (requestId.equals(targetId) && grid[r][c] == Board.SHIP && shipGrid[r][c] != null) {
+                    shipType = shipGrid[r][c].getShipType() != null ? shipGrid[r][c].getShipType().name() : null;
+                } else if (grid[r][c] == Board.HIT && shipGrid[r][c] != null) {
+                    shipType = shipGrid[r][c].getShipType() != null ? shipGrid[r][c].getShipType().name() : null;
+                }
+                result[r][c] = new BoardCellResponse(grid[r][c], shipType);
+            }
+        }
+        return result;
     }
 
     public boolean isParticipant(String playerId){

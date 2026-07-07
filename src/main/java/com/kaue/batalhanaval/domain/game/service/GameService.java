@@ -1,6 +1,7 @@
 package com.kaue.batalhanaval.domain.game.service;
 
 import com.kaue.batalhanaval.domain.game.dto.AttackResult;
+import com.kaue.batalhanaval.domain.game.dto.BoardCellResponse;
 import com.kaue.batalhanaval.domain.game.dto.GameStateResponse;
 import com.kaue.batalhanaval.domain.game.dto.PlaceShipRequest;
 import com.kaue.batalhanaval.domain.game.entity.Ship;
@@ -28,6 +29,7 @@ public class GameService {
     public boolean placeShip(String gameId, String playerId, PlaceShipRequest req) {
         Game game = getGame(gameId);
         Ship ship = new Ship(req.size(), req.orientation(), 0, false);
+        ship.setShipType(req.shipType());
         return game.placeShip(playerId, req.row(), req.col(), ship);
     }
 
@@ -47,6 +49,10 @@ public class GameService {
 
     public int[][] getBoard(String gameId, String requesterId, String targetId) {
         return getGame(gameId).getBoardView(requesterId, targetId);
+    }
+
+    public BoardCellResponse[][] getBoardDetailed(String gameId, String requesterId, String targetId) {
+        return getGame(gameId).getBoardViewDetailed(requesterId, targetId);
     }
 
     public GameStateResponse getGameState(String gameId, String requesterId) {

@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### DOC ###
+
+API_FRONTEND.md

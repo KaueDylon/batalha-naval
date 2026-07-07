@@ -1,5 +1,6 @@
 package com.kaue.batalhanaval.domain.game.entity;
 
+import com.kaue.batalhanaval.domain.game.dto.AttackCellResult;
 import com.kaue.batalhanaval.domain.game.entity.Ship;
 
 import java.util.ArrayList;
@@ -61,9 +62,9 @@ public class Board {
         return true;
     }
 
-    public String receiveAttack(int row, int col){
+    public AttackCellResult receiveAttack(int row, int col){
         if (grid[row][col] == MISS || grid[row][col] == HIT){
-            return "ATTACKED";
+            return new AttackCellResult("ATTACKED", null);
         }
 
         if (grid[row][col] == SHIP){
@@ -71,11 +72,11 @@ public class Board {
             Ship ship = shipGrid[row][col];
             ship.hit();
 
-            if (ship.isSunk()) return "SUNK";
-            return "HIT";
+            if (ship.isSunk()) return new AttackCellResult("SUNK", ship.getShipType());
+            return new AttackCellResult("HIT", ship.getShipType());
         }
         grid[row][col] = MISS;
-        return "MISS";
+        return new AttackCellResult("MISS", null);
     }
 
     public int[][] getGridForPlayer(){
@@ -90,5 +91,9 @@ public class Board {
 
     public int[][] getGrid(){
         return grid;
+    }
+
+    public Ship[][] getShipGrid() {
+        return shipGrid;
     }
 }

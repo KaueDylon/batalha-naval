@@ -1,8 +1,8 @@
 package com.kaue.batalhanaval.domain.game.controller;
+import com.kaue.batalhanaval.domain.game.dto.BoardCellResponse;
 import com.kaue.batalhanaval.domain.game.dto.GameStateResponse;
 import com.kaue.batalhanaval.domain.game.service.GameService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +17,10 @@ public class GameController {
     private final GameService gameService;
 
     @GetMapping("/{id}/board/{targetId}")
-    public ResponseEntity<int[][]> board(@PathVariable String id,
+    public ResponseEntity<BoardCellResponse[][]> board(@PathVariable String id,
                                          @PathVariable String targetId,
                                          @AuthenticationPrincipal UUID user){
-        int[][] board = gameService.getBoard(id, user.toString(), targetId);
+        BoardCellResponse[][] board = gameService.getBoardDetailed(id, user.toString(), targetId);
         return ResponseEntity.ok(board);
     }
 

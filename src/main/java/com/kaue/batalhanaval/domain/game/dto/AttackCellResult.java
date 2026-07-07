@@ -2,5 +2,5 @@ package com.kaue.batalhanaval.domain.game.dto;
 
 import com.kaue.batalhanaval.commons.enums.ShipType;
 
-public record PlaceShipRequest (int row, int col, int size, boolean orientation, ShipType shipType){
+public record AttackCellResult(String status, ShipType shipType) {
 }
