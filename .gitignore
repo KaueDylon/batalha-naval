@@ -35,3 +35,4 @@ build/
 ### DOC ###
 
 API_FRONTEND.md
+/.env
