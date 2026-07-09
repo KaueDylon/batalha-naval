@@ -2,6 +2,7 @@ package com.kaue.batalhanaval.domain.player.controller;
 
 import com.kaue.batalhanaval.commons.enums.Nation;
 import com.kaue.batalhanaval.commons.enums.NationPortrait;
+import com.kaue.batalhanaval.domain.player.dto.PlayerProfileResponse;
 import com.kaue.batalhanaval.domain.player.dto.PlayerResponse;
 import com.kaue.batalhanaval.domain.player.dto.PlayerUpdateRequest;
 import com.kaue.batalhanaval.domain.player.service.PlayerService;
@@ -23,6 +24,11 @@ public class PlayerController {
     @GetMapping("/me")
     public ResponseEntity<PlayerResponse> me(@AuthenticationPrincipal UUID userId) {
         return ResponseEntity.ok(playerService.findById(userId));
+    }
+
+    @GetMapping("/{playerId}")
+    public ResponseEntity<PlayerProfileResponse> getProfile(@PathVariable UUID playerId) {
+        return ResponseEntity.ok(playerService.findProfileById(playerId));
     }
 
     @PatchMapping("/me")

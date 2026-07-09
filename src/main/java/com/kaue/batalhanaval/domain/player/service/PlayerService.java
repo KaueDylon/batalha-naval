@@ -2,6 +2,7 @@ package com.kaue.batalhanaval.domain.player.service;
 
 import com.kaue.batalhanaval.commons.enums.Nation;
 import com.kaue.batalhanaval.commons.enums.NationPortrait;
+import com.kaue.batalhanaval.domain.player.dto.PlayerProfileResponse;
 import com.kaue.batalhanaval.domain.player.dto.PlayerResponse;
 import com.kaue.batalhanaval.domain.player.dto.PlayerUpdateRequest;
 import com.kaue.batalhanaval.domain.player.entity.Player;
@@ -24,6 +25,12 @@ public class PlayerService {
         Player player = playerRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Jogador não encontrado."));
         return toResponse(player);
+    }
+
+    public PlayerProfileResponse findProfileById(UUID id) {
+        Player player = playerRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Jogador não encontrado."));
+        return toProfileResponse(player);
     }
 
     @Transactional
@@ -103,5 +110,14 @@ public class PlayerService {
                 player.getNation() != null ? player.getNation().name() : null,
                 player.getPortrait() != null ? player.getPortrait().getId() : null,
                 player.getWins(), player.getLosses());
+    }
+
+    private PlayerProfileResponse toProfileResponse(Player player) {
+        return new PlayerProfileResponse(
+                player.getId(),
+                player.getName(),
+                player.getNation() != null ? player.getNation().name() : null,
+                player.getPortrait() != null ? player.getPortrait().getId() : null
+        );
     }
 }
