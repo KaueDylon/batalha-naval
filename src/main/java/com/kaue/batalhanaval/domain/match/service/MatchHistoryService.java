@@ -29,17 +29,18 @@ public class MatchHistoryService {
         return matchHistoryRepository.findByWinnerIdOrLoserIdOrderByPlayedAtDesc(playerId, playerId);
     }
 
-    public List<MatchHistoryResponse> getPlayerHistoryResponse(UUID playerId){
+    public List<MatchHistoryResponse> getPlayerHistoryResponse(UUID playerId, int limit, int offset){
         return matchHistoryRepository
                 .findByWinnerIdOrLoserIdOrderByPlayedAtDesc(playerId, playerId)
                 .stream()
+                .skip(offset)
+                .limit(limit)
                 .map(match -> new MatchHistoryResponse(
                         match.getId(),
                         match.getWinnerId(),
                         match.getLoserId(),
                         match.getWinnerId().equals(playerId),
                         match.getPlayedAt()
-
                 ))
                 .toList();
     }
