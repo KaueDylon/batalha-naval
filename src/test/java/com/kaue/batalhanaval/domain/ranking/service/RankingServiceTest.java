@@ -124,6 +124,7 @@ class RankingServiceTest {
         List<RankingResponse> ranking = rankingService.getTopPlayers(10, 0);
         assertEquals(1, ranking.size());
         assertEquals(0.0, ranking.get(0).winrate());
+
     }
 
     // --- Helper ---

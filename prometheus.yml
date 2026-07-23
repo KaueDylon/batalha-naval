@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 5s
+scrape_configs:
+  - job_name: 'navalwarfare-metrics'
+    scheme: https
+    metrics_path: '/actuator/prometheus'
+    basic_auth:
+      username: 'prometheus'
+      password: 'prometheus'
+    static_configs:
+      - targets: ['batalha-naval-9gfm.onrender.com']
+        labels:
+          application: 'prometheus-grafana'

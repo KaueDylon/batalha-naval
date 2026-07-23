@@ -39,6 +39,7 @@ public class SecurityConfig {
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/h2-console/**").permitAll()
+                        .requestMatchers("/actuator/health", "/actuator/metrics", "/actuator/info", "/actuator/prometheus").permitAll()
                         // Com outros cargos...
                         .anyRequest().authenticated()
                 )
