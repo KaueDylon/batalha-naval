@@ -51,7 +51,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("https://naval-warfare-taupe.vercel.app/", "http://localhost:5173", "https://naval-warfare-git-main-kauedylons-projects.vercel.app",
+        config.setAllowedOrigins(List.of("https://naval-warfare-taupe.vercel.app", "http://localhost:5173", "https://naval-warfare-git-main-kauedylons-projects.vercel.app",
                 "https://naval-warfare-9klxqtuhr-kauedylons-projects.vercel.app"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
